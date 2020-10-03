@@ -2,13 +2,18 @@ from flask import Flask, request, render_template, redirect
 from flask_pymongo import PyMongo
 from pymongo import MongoClient  
 from bson import ObjectId
-
+from validators_mongo import validator
+from mongoengine import *
 app = Flask(__name__)
 
 
 client = MongoClient("mongodb://127.0.0.1:27017")
+
 db = client.mymongodb
-notes = db.note
+
+db.create_collection("newnotes", validator=validator)
+notes = db.newnotes
+
 
 
 @app.route("/",  methods=["GET", "POST"])
