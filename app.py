@@ -25,45 +25,46 @@ notes = db.new_note
 users = db.users
 
 @app.route("/",  methods=["GET", "POST"])
-def home(user):
-  return render_template("index.html", title="Home", user=user)
+def home():
+  return render_template("index.html", title="Home")
 
-@app.route("/<user.username>/notes",  methods=["GET", "POST"])
-def notess(user):
-	if request.form:
-    author = user._id
+@app.route("/<username>/notes/",  methods=["GET", "POST"])
+def notess(username):
+  if request.form:
+    author = username
     title = request.form.get("title")
     note = request.form.get("note")
     notes.insert_one({"title":title, "note":note, "author":author})
-    return redirect("/")
-	 notes_all = notes.find()
+    return redirect("/<username>/notes/")
+  notes_all = notes.find()
+  username = username
 
-	return render_template("notes.html", notes=notes_all)
+  return render_template("notes.html", notes=notes_all, username=username)
 
 
 @app.route("/signup", methods=["POST"])
 def signup():
-  username = request.form.get("user")
+  username = request.form.get("username")
   email = request.form.get("email")
   password = request.form.get("password")
   users.insert_one({"username":username, "email":email, "password":password})
   msg = "Signed up Successfully please Signin"
-  return redirect(url_for("/", messages=msg))
+  return redirect(url_for("home", messages=msg))
 
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
-  username = request.form.get("user")
+  username = request.form.get("username")
   password = request.form.get("password")
   user = users.find({"username":username})
-  print(user[0], user)
-  if user[0]:
+  if user:
     if user[0]["password"] == password :
       msg = "Successfully signed in"
-      return redirect(url_for("/notes", user=user[0], messages=msg))
+      print(user[0])
+      return redirect(url_for("notess", username=user[0]["username"], messages=msg))
     else:
       msg = "Wrong password"
       msg_tag ="danger"
-      return redirect(url_for("/", messages=msg))
+      return redirect(url_for("home", messages=msg))
 
   else:
       msg = "username does not exists"
@@ -79,16 +80,18 @@ def delete():
 	return redirect("/notes")
 
 
-@app.route("/<id>/update", methods=["GET", "POST"])
-def update(id):
+@app.route("<username>/<id>/update", methods=["GET", "POST"])
+def update(username, id):
 	
 	note =  notes.find({"_id":ObjectId(id)})[0]
 	print(note)
-	if request.form:
-		newtitle = request.form.get("newtitle")
-		newnote = request.form.get("newnote")
-		notes.update_one({"_id":ObjectId(id)}, {"$set" : {"title":newtitle, "note":newnote} })
-		return redirect("/notes")
+  
+  if request.form:
+    newtitle = request.form.get("newtitle")
+    newnote = request.form.get("newnote")
+    newauthor = username
+    notes.update_one({"_id":ObjectId(id)}, {"$set" : {"title":newtitle, "note":newnote, "author":author} })
+    return redirect("/notes")
 	return render_template("update.html", note=note)
 
 if __name__ == '__main__':

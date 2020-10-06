@@ -8,7 +8,7 @@
 
 </head>
 <body>
-	<form action="/" method="POST">
+	<form action="{{url_for("notess", username=username)}}" method="POST">
 		<input type="text" name="title" placeholder="title">
 		<input type="text" name="note" placeholder="title">
 		<input type="submit" value="ADD">
@@ -18,10 +18,11 @@
 	{% if note.title %}
 		<h1> {{note.title}} </h1>
 		<p> {{note.note}} </p>
+    <p> written by {{ note.author}}</p>
 		<form method="POST" action="./delete">
   <input type="hidden" value="{{note.title}}" name="title">
   <input class="input-text" type="submit" value="Delete">
-  <button class="input-text"><a href="{{ url_for('update', id=note._id) }}">Update</a></button>
+  <button class="input-text"><a href="{{ url_for('update', id=note._id, username=note.author) }}">Update</a></button>
   {% endif %}
 </form>
 	{% endfor %}

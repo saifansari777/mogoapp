@@ -12,8 +12,8 @@ validator = {
                "description": "must be a string and is required"
             },
             "author":{
-              "bsontype":"objectId",
-              "description":"User should be authenticated"
+                "bsonType": "string",
+               "description": "must be a string and is required"
             }
             }
          }
