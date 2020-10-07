@@ -77,22 +77,22 @@ def signin():
 def delete():
 	title = request.form.get("title")
 	notes.remove({"title":title})
-	return redirect("/notes")
+	return redirect("/f/notes")
 
 
-@app.route("<username>/<id>/update", methods=["GET", "POST"])
+@app.route("/<username>/<id>/update", methods=["GET", "POST"])
 def update(username, id):
 	
-	note =  notes.find({"_id":ObjectId(id)})[0]
-	print(note)
+  note =  notes.find({"_id":ObjectId(id)})[0]
+  print(note)
   
   if request.form:
     newtitle = request.form.get("newtitle")
     newnote = request.form.get("newnote")
     newauthor = username
-    notes.update_one({"_id":ObjectId(id)}, {"$set" : {"title":newtitle, "note":newnote, "author":author} })
-    return redirect("/notes")
-	return render_template("update.html", note=note)
+    notes.update_one({"_id":ObjectId(id)}, {"$set" : {"title":newtitle, "note":newnote, "author":newauthor} })
+    return redirect(url_for("notess", username=username))
+  return render_template("update.html", note=note)
 
 if __name__ == '__main__':
 	app.run(host="0.0.0.0", debug=True)

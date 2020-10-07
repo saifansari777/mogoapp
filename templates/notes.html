@@ -1,30 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-	<title>MongoApp</title>
-
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
+    <div class="note-form">
 	<form action="{{url_for("notess", username=username)}}" method="POST">
-		<input type="text" name="title" placeholder="title">
-		<input type="text" name="note" placeholder="title">
-		<input type="submit" value="ADD">
+		<input class="input-text"type="text" name="title" placeholder="title">
+		<textarea cols="85" rows="10" type="text" name="note" placeholder="Content"> </textarea>
+		<input class="input-text input-submit" type="submit" value="ADD">
 	</form>
-
+    </div>
+<div class="notes-container">
 	{% for note in notes %}
-	{% if note.title %}
+	<div class="note">
 		<h1> {{note.title}} </h1>
 		<p> {{note.note}} </p>
     <p> written by {{ note.author}}</p>
-		<form method="POST" action="./delete">
+		<form method="POST" action="/delete">
   <input type="hidden" value="{{note.title}}" name="title">
-  <input class="input-text" type="submit" value="Delete">
-  <button class="input-text"><a href="{{ url_for('update', id=note._id, username=note.author) }}">Update</a></button>
-  {% endif %}
+  <input class="note-button" type="submit" value="Delete">
+  <button class="note-button"><a href="{{ url_for('update', id=note._id, username=username) }}">Update</a></button>
+
 </form>
+
+</div>
 	{% endfor %}
-</body>
-</html>
+</div>
+{% endblock %}
